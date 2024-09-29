@@ -12,7 +12,7 @@
 
 
           
-           $fileDirectory = "./upload/" . $file_name;
+           $fileDirectory = "upload/" . $file_name;
 
            if(move_uploaded_file($file_tmp_name , $fileDirectory)){
             

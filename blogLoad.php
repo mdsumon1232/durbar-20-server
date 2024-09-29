@@ -4,7 +4,7 @@
 
     // load data from database
 
-    $dataLoad  = $conn -> prepare ("SELECT blog.* , admin.full_name  FROM admin INNER JOIN blog WHERE admin.admin_id = blog.admin_id");
+    $dataLoad  = $conn -> prepare ("SELECT blog.* , admin.full_name , admin.profile FROM admin INNER JOIN blog WHERE admin.admin_id = blog.admin_id");
 
     $dataLoad -> execute();
 

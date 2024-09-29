@@ -1,28 +1,25 @@
 <?php
     require './connect.php';
-
-    // CORS headers
-    header('Access-Control-Allow-Origin: http://localhost:5173'); // Allow requests from your React app
-    header('Access-Control-Allow-Methods: POST'); // Allow POST method (assuming you're sending a POST request)
-    header('Access-Control-Allow-Headers: Content-Type'); // Allow Content-Type header (common for sending JSON)
+    require './cros_policy.php';
    
-    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-          http_response_code(200); 
-        exit;
-    }
+   
 
     // Handle actual POST request
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Get the input JSON data
-        $json_data = file_get_contents('php://input');
-        $admin_data = json_decode($json_data, true);
+        
 
-        if ($admin_data) {
+        
             // Extract data from the request
-            $full_name = $admin_data['full_name'];
-            $email = $admin_data['email'];
-            $mobile = $admin_data['mobile'];
-            $password = $admin_data['password'];
+            $full_name = $_POST['full_name'];
+            $email = $_POST['email'];
+            $mobile = $_POST['mobile'];
+            $password = $_POST['password'];
+            $fileName = $_FILES["profile"]["name"];
+            $fileTmpName = $_FILES['profile']['tmp_name'];
+            
+
+            $file_directory = 'upload/'.$fileName;
             $encrypt_password = password_hash($password , PASSWORD_DEFAULT);
 
             // Check if the donor exists in the donor list
@@ -49,15 +46,21 @@
 
                 } else{
 
-                    $admin_register = $conn->prepare("INSERT INTO admin (full_name, admin_email, admin_mobile, password, status) VALUES (?,?,?,?,?)");
+                    if(move_uploaded_file($fileTmpName , $file_directory)){
+
+                  $admin_register = $conn->prepare("INSERT INTO admin (full_name, admin_email, admin_mobile, password, status ,profile) VALUES (?,?,?,?,?,?)");
                 $status = 0; // Pending status
-                $admin_register->bind_param('ssssi', $full_name, $email, $mobile, $encrypt_password, $status);
+                $admin_register->bind_param('ssssis', $full_name, $email, $mobile, $encrypt_password, $status,$file_directory);
 
                 if ($admin_register->execute()) {
                     echo json_encode(["message" => "Pending, waiting for approval", "success" => true]);
                 } else {
                     echo json_encode(["message" => "Something went wrong! Please try again", "success" => false]);
                 }
+
+                    }else{
+                        echo json_encode(["message" => "photo not upload" , "success" => false]);
+                    }
                 }
 
              
@@ -66,6 +69,6 @@
                 // Donor not found, return error
                 echo json_encode(["message" => "Please register as a donor first", "success" => false]);
             }
-        }
+        
     }
 ?>
