@@ -4,7 +4,7 @@
 
     // load data from database
 
-    $dataLoad  = $conn -> prepare ("SELECT blog.* , admin.* FROM admin INNER JOIN blog WHERE admin.admin_id = blog.admin_id");
+    $dataLoad  = $conn -> prepare ("SELECT blog.* , admin.full_name  FROM admin INNER JOIN blog WHERE admin.admin_id = blog.admin_id");
 
     $dataLoad -> execute();
 
@@ -20,7 +20,7 @@
         echo json_encode(["data" => $blogs , "success" => true]);
 
     }else{
-        echo json_encode(["message" => "no data found" , "success" => false] )
+        echo json_encode(["message" => "no data found" , "success" => false] );
     }
 
 ?>
