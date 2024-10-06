@@ -7,9 +7,10 @@
             $title = $_POST['title'];
             $content = $_POST['content'];
             $admin_id = $_POST['id'];
+            $meta = $_POST['metaText'];
             $file_name = $_FILES['cover']['name'];
             $file_tmp_name = $_FILES['cover']['tmp_name'];
-
+          
 
           
            $fileDirectory = "upload/" . $file_name;
@@ -18,9 +19,9 @@
             
             // upload data on database
 
-            $blogData = $conn -> prepare("INSERT INTO blog (article,title,cover,admin_id) value (?,?,?,?)");
+            $blogData = $conn -> prepare("INSERT INTO blog (article,title,cover,admin_id , meta	) value (?,?,?,?,?)");
 
-            $blogData -> bind_param('sssi' , $content , $title , $fileDirectory , $admin_id );
+            $blogData -> bind_param('sssis' , $content , $title , $fileDirectory , $admin_id , $meta);
 
             if($blogData -> execute()){
               echo json_encode(["message" => "file upload done" , "success" => true]);
